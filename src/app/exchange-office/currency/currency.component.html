@@ -1,0 +1,41 @@
+<li class="list-group-item mx-5">
+  <div class="currency-info">
+    <h4 class="mb-3">{{ currency.currency }} ({{ currency.code }})</h4>
+    <div class="row">
+      <div class="col-md-6">
+        <p class="mb-2">Bid: {{ currency.bid }}</p>
+        <p class="mb-2">Ask: {{ currency.ask }}</p>
+      </div>
+      <div class="col-md-6">
+        <label for="conversionType">Pick operation:</label>
+        <select id="conversionType" [(ngModel)]="operationType" (change)="calculateConversion()" class="form-select">
+          <option value="bid">Bid</option>
+          <option value="ask">Ask</option>
+        </select>
+        <div class="input-group mt-2">
+          <input required min='0' max='5000' appAmountValidator
+                 #name='ngModel'
+                 [(ngModel)]="amount" (input)="calculateConversion()"
+                 type="number"
+                 placeholder="Enter the amount"
+                 class="form-control"/>
+          <span class="input-group-text">calculated value: {{ calculateValue }}</span>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2"
+                [disabled]="name.control?.errors?.['min']
+                || name.control?.errors?.['max']"
+                (click)="toggleModal()">Calculate
+        </button>
+        <ng-container *ngIf="name.control?.invalid && (name.control?.touched || name.control?.dirty)">
+          <app-alert *ngIf="name.control?.errors?.['min']" [errorMessage]="'the amount cannot be negative'"></app-alert>
+          <app-alert *ngIf="name.control?.errors?.['max']" [errorMessage]="'maximum transaction is 5000'"></app-alert>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</li>
+
+<app-modal *ngIf="openModal" (close)="toggleModal()" [title]="'Tranzakcja '">
+  <button class="btn btn-info btn-sm" (click)="toggleModal()">Anuluj</button>
+</app-modal>
+
